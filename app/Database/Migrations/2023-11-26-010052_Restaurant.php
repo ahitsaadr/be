@@ -15,11 +15,11 @@ class Restaurant extends Migration
                 'constraint' => 11,
                 'auto_increment' => true
             ],
-            'nama' => [
+            'nama_restaurant' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
-            'description' => [
+            'description_restaurant' => [
                 'type' => 'TEXT',
                 'null' => true,
             ],

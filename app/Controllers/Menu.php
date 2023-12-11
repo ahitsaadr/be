@@ -17,7 +17,7 @@ class Menu extends ResourceController
     public function index()
     {
         $model = new MenuModel();
-        $data = $model->findAll();
+        $data = $model->getMenu();
         return $this->respond($data);
     }
 
@@ -48,6 +48,7 @@ class Menu extends ResourceController
             'nama' => 'required',
             'description' => 'required',
             'price' => 'required',
+            'restaurant_id' => 'required',
         ];
         $data = [
             'restaurant_id' => $this->request->getVar('restaurant_id'),
@@ -70,23 +71,39 @@ class Menu extends ResourceController
     }
 
     /**
-     * Return the editable properties of a resource object
-     *
-     * @return mixed
-     */
-    public function edit($id = null)
-    {
-        //
-    }
-
-    /**
      * Add or update a model resource, from "posted" properties
      *
      * @return mixed
      */
     public function update($id = null)
     {
-        //
+        helper(['form']);
+        $rules = [
+            'nama' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'restaurant_id' => 'required',
+        ];
+        $data = [
+            'restaurant_id' => $this->request->getVar('restaurant_id'),
+            'nama' => $this->request->getVar('nama'),
+            'description' => $this->request->getVar('description'),
+            'price' => $this->request->getVar('price'),
+        ];
+
+        if(!$this->validate($rules)) return $this->fail($this->validator->getErrors());
+        $model = new MenuModel();
+        $findById = $model->find(['id' => $id]);
+        if(!$findById) return $this->failNotFound('No Data Found');
+        $model->update($id, $data);
+        $response = [
+            'status' => 200,
+            'error' => null,
+            'messages' => [
+                'success' => 'Data Updated'
+            ]
+        ];
+        return $this->respond($response);
     }
 
     /**
@@ -96,6 +113,17 @@ class Menu extends ResourceController
      */
     public function delete($id = null)
     {
-        //
+        $model = new MenuModel();
+        $findById = $model->find(['id' => $id]);
+        if(!$findById) return $this->failNotFound('No Data Found');
+        $model->delete($id);
+        $response = [
+            'status' => 200,
+            'error' => null,
+            'messages' => [
+                'success' => 'Data Deleted'
+            ]
+        ];
+        return $this->respond($response);
     }
 }

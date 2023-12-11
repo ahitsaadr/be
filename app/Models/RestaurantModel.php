@@ -12,7 +12,7 @@ class RestaurantModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nama', 'description', 'location', 'created_at'];
+    protected $allowedFields    = ['nama_restaurant', 'description_restaurant', 'location', 'created_at'];
 
     // Dates
     protected $useTimestamps = false;
