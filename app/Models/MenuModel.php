@@ -12,7 +12,7 @@ class MenuModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['restaurant_id', 'nama', 'description', 'price', 'created_at'];
+    protected $allowedFields    = ['restaurant_id', 'nama', 'description', 'price', 'image', 'created_at'];
 
     // Dates
     protected $useTimestamps = false;
@@ -41,10 +41,21 @@ class MenuModel extends Model
     public function getMenu()
     {
         return $this->db->table('menu_items')
-            ->select('menu_items.id, menu_items.restaurant_id, menu_items.nama, menu_items.price, menu_items.description, restaurant.nama_restaurant AS nama_restaurant') 
+            ->select('menu_items.id, menu_items.restaurant_id, menu_items.nama, menu_items.price, menu_items.description, menu_items.image, restaurant.nama_restaurant AS nama_restaurant') 
             ->join('restaurant', 'restaurant.id=menu_items.restaurant_id', 'left')
             ->get()
             ->getResultArray();  
+    }
+
+    public function getFood()
+    {
+        return $this->db->table('menu_items')
+        ->select('menu_items.id, menu_items.restaurant_id, menu_items.nama, menu_items.price, menu_items.description, menu_items.image, restaurant.nama_restaurant AS nama_restaurant') 
+        ->join('restaurant', 'restaurant.id=menu_items.restaurant_id', 'left')
+        ->orderBy('menu_items.id', 'desc')
+        ->limit(10)
+        ->get()
+        ->getResultArray(); 
     }
 
     

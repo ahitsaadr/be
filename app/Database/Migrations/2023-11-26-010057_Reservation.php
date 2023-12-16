@@ -20,6 +20,11 @@ class Reservation extends Migration
                 'constraint' => 11,
                 'null' => true
             ],
+            'in_name' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true
+            ],
             'restaurant_id' => [
                 'type' => 'INT',
                 'constraint' => 11,

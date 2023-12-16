@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ReservationModel extends Model
+class ContactModel extends Model
 {
-    protected $table            = 'reservation';
+    protected $table            = 'contact_us';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['user_id', 'in_name', 'restaurant_id', 'date', 'time', 'num_guest', 'created_at'];
+    protected $allowedFields    = ['nama', 'email', 'message', 'created_at'];
 
     // Dates
     protected $useTimestamps = false;
@@ -37,14 +37,4 @@ class ReservationModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    public function getReservation()
-    {
-        return $this->db->table('reservation')
-            ->select('reservation.id, reservation.restaurant_id, reservation.user_id, reservation.in_name, reservation.date, reservation.time, reservation.num_guest, restaurant.nama_restaurant AS nama_restaurant, users.nama AS nama') 
-            ->join('restaurant', 'restaurant.id=reservation.restaurant_id', 'left')
-            ->join('users', 'users.id=reservation.user_id', 'left')
-            ->get()
-            ->getResultArray();  
-    }
 }

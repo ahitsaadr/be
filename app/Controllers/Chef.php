@@ -2,29 +2,20 @@
 
 namespace App\Controllers;
 
-use App\Models\MenuModel;
-use CodeIgniter\API\ResponseTrait;
+use App\Models\ChefModel;
 use CodeIgniter\RESTful\ResourceController;
 
-class Menu extends ResourceController
+class Chef extends ResourceController
 {
     /**
      * Return an array of resource objects, themselves in array format
      *
      * @return mixed
      */
-    use ResponseTrait;
     public function index()
     {
-        $model = new MenuModel();
-        $data = $model->getMenu();
-        return $this->respond($data);
-    }
-
-    public function menuLanding()
-    {
-        $model = new MenuModel();
-        $data = $model->getFood();
+        $model = new ChefModel();
+        $data = $model->findAll();
         return $this->respond($data);
     }
 
@@ -35,7 +26,7 @@ class Menu extends ResourceController
      */
     public function show($id = null)
     {
-        $model = new MenuModel();
+        $model = new ChefModel();
         $data = $model->find(['id' => $id]);
         if(!$data) return $this->failNotFound('No Data Found');
         return $this->respond($data[0]);
@@ -53,16 +44,10 @@ class Menu extends ResourceController
 
         $rules = [
             'nama' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'restaurant_id' => 'required',
             'image' => 'uploaded[image]|mime_in[image,image/jpg,image/jpeg,image/png]|max_size[image,1024]',
         ];
         $data = [
-            'restaurant_id' => $this->request->getVar('restaurant_id'),
             'nama' => $this->request->getVar('nama'),
-            'description' => $this->request->getVar('description'),
-            'price' => $this->request->getVar('price'),
         ];
 
         if (!$this->validate($rules)) {
@@ -73,11 +58,11 @@ class Menu extends ResourceController
 
         if ($image->isValid() && !$image->hasMoved()) {
             $newName = $image->getRandomName();
-            $image->move('images/menu/', $newName);
+            $image->move('images/chef/', $newName);
             $data['image'] = $newName;
         }
 
-        $model = new MenuModel();
+        $model = new ChefModel();
         $model->save($data);
         $response = [
             'status' => 201,
@@ -98,52 +83,37 @@ class Menu extends ResourceController
     {
         helper(['form']);
         
-        // Validation rules
         $rules = [
             'nama' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'restaurant_id' => 'required',
             'image' => 'uploaded[image]|max_size[image,1024]|is_image[image]', // Allow image upload with max size 1MB
         ];
 
-        // Validate request data
         if (!$this->validate($rules)) {
             return $this->fail($this->validator->getErrors());
         }
 
-        // Get existing menu data
-        $model = new MenuModel();
+        $model = new ChefModel();
         $menu = $model->find($id);
         if (!$menu) {
             return $this->failNotFound('No Data Found');
         }
 
-        // Prepare data for update
         $data = [
-            'restaurant_id' => $this->request->getVar('restaurant_id'),
             'nama' => $this->request->getVar('nama'),
-            'description' => $this->request->getVar('description'),
-            'price' => $this->request->getVar('price'),
         ];
 
-        // Handle image upload
         $image = $this->request->getFile('image');
         if ($image->isValid() && !$image->hasMoved()) {
-            // Remove old image
-            if ($menu['image'] && file_exists('images/menu/' . $menu['image'])) {
-                unlink('images/menu/' . $menu['image']);
+            if ($menu['image'] && file_exists('images/chef/' . $menu['image'])) {
+                unlink('images/chef/' . $menu['image']);
             }
 
-            // Save new image
             $newImageName = $image->getRandomName();
-            $image->move('images/menu/', $newImageName);
+            $image->move('images/chef/', $newImageName);
 
-            // Update data with new image
             $data['image'] = $newImageName;
         }
 
-        // Update menu data
         $model->update($id, $data);
 
         $response = [
@@ -164,14 +134,14 @@ class Menu extends ResourceController
      */
     public function delete($id = null)
     {
-        $model = new MenuModel();
+        $model = new ChefModel();
         $menu = $model->find($id);
         if (!$menu) {
             return $this->failNotFound('No Data Found');
         }
 
-        if ($menu['image'] && file_exists('images/menu/' . $menu['image'])) {
-            unlink('images/menu/' . $menu['image']);
+        if ($menu['image'] && file_exists('images/chef/' . $menu['image'])) {
+            unlink('images/chef/' . $menu['image']);
         }
 
         $model->delete($id);

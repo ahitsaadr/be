@@ -2,22 +2,20 @@
 
 namespace App\Controllers;
 
-use App\Models\ReservationModel;
-use CodeIgniter\API\ResponseTrait;
+use App\Models\ContactModel;
 use CodeIgniter\RESTful\ResourceController;
 
-class Reservation extends ResourceController
+class Contact extends ResourceController
 {
     /**
      * Return an array of resource objects, themselves in array format
      *
      * @return mixed
      */
-    use ResponseTrait;
     public function index()
     {
-        $model = new ReservationModel();
-        $data = $model->getReservation();
+        $model = new ContactModel();
+        $data = $model->findAll();
         return $this->respond($data);
     }
 
@@ -28,7 +26,7 @@ class Reservation extends ResourceController
      */
     public function show($id = null)
     {
-        $model = new ReservationModel();
+        $model = new ContactModel();
         $data = $model->find(['id' => $id]);
         if(!$data) return $this->failNotFound('No Data Found');
         return $this->respond($data[0]);
@@ -45,54 +43,18 @@ class Reservation extends ResourceController
         helper(['form']);
 
         $rules = [
-            'user_id' => 'required',
-            'restaurant_id' => 'required',
-            'date' => 'required',
-            'time' => 'required',
-            'num_guest' => 'required',
+            'nama' => 'required',
+            'email' => 'required|valid_email',
+            'message' => 'required',
         ];
         $data = [
-            'user_id' => $this->request->getVar('user_id'),
-            'restaurant_id' => $this->request->getVar('restaurant_id'),
-            'date' => $this->request->getVar('date'),
-            'time' => $this->request->getVar('time'),
-            'num_guest' => $this->request->getVar('num_guest'),
+            'nama' => $this->request->getVar('nama'),
+            'email' => $this->request->getVar('email'),
+            'message' => $this->request->getVar('message'),
         ];
         
         if(!$this->validate($rules)) return $this->fail($this->validator->getErrors());
-        $model = new ReservationModel();
-        $model->save($data);
-        $response = [
-            'status' => 201,
-            'eror' => null,
-            'messages' => [
-                'success' => 'Data Inserted'
-            ]
-        ];
-        return $this->respondCreated($response);
-    }
-
-    public function createOrder()
-    {
-        helper(['form']);
-
-        $rules = [
-            'in_name' => 'required',
-            'restaurant_id' => 'required',
-            'date' => 'required',
-            'time' => 'required',
-            'num_guest' => 'required',
-        ];
-        $data = [
-            'in_name' => $this->request->getVar('in_name'),
-            'restaurant_id' => $this->request->getVar('restaurant_id'),
-            'date' => $this->request->getVar('date'),
-            'time' => $this->request->getVar('time'),
-            'num_guest' => $this->request->getVar('num_guest'),
-        ];
-        
-        if(!$this->validate($rules)) return $this->fail($this->validator->getErrors());
-        $model = new ReservationModel();
+        $model = new ContactModel();
         $model->save($data);
         $response = [
             'status' => 201,
@@ -113,22 +75,18 @@ class Reservation extends ResourceController
     {
         helper(['form']);
         $rules = [
-            'user_id' => 'required',
-            'restaurant_id' => 'required',
-            'date' => 'required',
-            'time' => 'required',
-            'num_guest' => 'required',
+            'nama' => 'required',
+            'email' => 'required|valid_email',
+            'message' => 'required',
         ];
         $data = [
-            'user_id' => $this->request->getVar('user_id'),
-            'restaurant_id' => $this->request->getVar('restaurant_id'),
-            'date' => $this->request->getVar('date'),
-            'time' => $this->request->getVar('time'),
-            'num_guest' => $this->request->getVar('num_guest'),
+            'nama' => $this->request->getVar('nama'),
+            'email' => $this->request->getVar('email'),
+            'message' => $this->request->getVar('message'),
         ];
 
         if(!$this->validate($rules)) return $this->fail($this->validator->getErrors());
-        $model = new ReservationModel();
+        $model = new ContactModel();
         $findById = $model->find(['id' => $id]);
         if(!$findById) return $this->failNotFound('No Data Found');
         $model->update($id, $data);
@@ -149,7 +107,7 @@ class Reservation extends ResourceController
      */
     public function delete($id = null)
     {
-        $model = new ReservationModel();
+        $model = new ContactModel();
         $findById = $model->find(['id' => $id]);
         if(!$findById) return $this->failNotFound('No Data Found');
         $model->delete($id);
